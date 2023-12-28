@@ -12,7 +12,7 @@ with open('instance_details.json', 'r') as file:
 
 instance_ids = []
 for instance in instance_details:
-    if instance['Name'] != 'orchestrator':
+    if "worker" in instance['Name']:
         instance_ids.append(instance['InstanceID'])
 
 # Function to read a script file
@@ -20,25 +20,17 @@ def read_script(file_path):
     with open(file_path, 'r') as f:
         return f.read()
 
-# # Read your bash scripts
-# script1 = read_script('./scripts/install_docker.sh')
-# script2 = read_script('./scripts/deploy_worker_app.sh')
-
 commands = [
-    # Install docker
-    'sudo apt-get update',
-    'sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common',
-    'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -',
-    'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"',
-    'sudo apt-get update',
-    'apt-cache policy docker-ce',
-    'sudo apt-get install -y docker-ce',
-    'sudo usermod -aG docker ubuntu',
-    'sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose',
-    'sudo chmod +x /usr/local/bin/docker-compose',
-    # Deploy worker
-    'cd /home/ubuntu && git clone https://github.com/mh-malekpour/Deploying-ML-Model-on-AWS.git',
-    'cd /home/ubuntu/Deploying-ML-Model-on-AWS/worker && sudo docker-compose up --build'
+    'sudo mkdir -p /opt/mysqlcluster/home',
+    'cd /opt/mysqlcluster/home',
+    'sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz',
+    'sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz',
+    'sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc',
+    # "echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh",
+    # "echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh",
+    # "sudo source /etc/profile.d/mysqlc.sh",
+    "sudo sh -c \"echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' > /etc/profile.d/mysqlc.sh && echo 'export PATH=\\$MYSQLC_HOME/bin:\\$PATH' >> /etc/profile.d/mysqlc.sh && . /etc/profile.d/mysqlc.sh\"",
+    "sudo apt-get update && sudo apt-get -y install libncurses5",
 ]
 
 def send_command(instance_ids, command):

@@ -19,13 +19,6 @@ commands = [
     # Install docker
     'sudo apt-get update',
     'sudo apt-get install -y mysql-server',
-    """sudo mysql_secure_installation <<EOF
-    n
-    y
-    y
-    y
-    n
-    EOF""",
     'wget https://downloads.mysql.com/docs/sakila-db.tar.gz',
     'tar -xzf sakila-db.tar.gz',
     'sudo mysql < sakila-db/sakila-schema.sql',
