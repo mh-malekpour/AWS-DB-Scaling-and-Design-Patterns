@@ -1,5 +1,5 @@
-'sudo apt-get update',
-'sudo apt-get install -y mysql-server',
+sudo apt-get update'
+sudo apt-get install -y mysql-server
 """sudo mysql_secure_installation <<EOF
 n
 y
@@ -9,30 +9,36 @@ n
 EOF""",
 'wget https://downloads.mysql.com/docs/sakila-db.tar.gz',
 'tar -xzf sakila-db.tar.gz',
-'sudo mysql < sakila-db/sakila-schema.sql',
-'sudo mysql < sakila-db/sakila-data.sql',
+'sudo mysql -u root -p < sakila-db/sakila-schema.sql',
+'sudo mysql -u root -p < sakila-db/sakila-data.sql',
 
-
-# each node:
-## Phase 1
+# Cluster
+## each node:
+### Phase 1
 sudo mkdir -p /opt/mysqlcluster/home
-cd /opt/mysqlcluster/home
-sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
-sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
-sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc
-echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh
-echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh
-source /etc/profile.d/mysqlc.sh
+cd /opt/mysqlcluster/home && sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
+cd /opt/mysqlcluster/home && sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
+cd /opt/mysqlcluster/home && sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc
+echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh && echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh && source /etc/profile.d/mysqlc.sh
 sudo apt-get update && sudo apt-get -y install libncurses5
 
-## Phase 2
+### Phase 2
 sudo mkdir -p /opt/mysqlcluster/deploy/ndb_data
-ndbd -c ip-10-0-1-198.ec2.internal:1186
-
+sudo chmod -R 777 /opt
+ndbd -c ip-10-0-1-225.ec2.internal:1186
 
 
 
 # manager node:
+## Phase 1
+sudo mkdir -p /opt/mysqlcluster/home
+cd /opt/mysqlcluster/home && sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
+cd /opt/mysqlcluster/home && sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
+cd /opt/mysqlcluster/home && sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc
+echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh && echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh && source /etc/profile.d/mysqlc.sh
+sudo apt-get update && sudo apt-get -y install libncurses5
+
+## Phase 2
 sudo mkdir -p /opt/mysqlcluster/deploy
 cd /opt/mysqlcluster/deploy
 sudo mkdir conf
@@ -50,7 +56,7 @@ port=3306
 sudo nano config.ini
 -------------
 [ndb_mgmd]
-hostname=ip-10-0-1-198.ec2.internal
+hostname=ip-10-0-1-225.ec2.internal
 datadir=/opt/mysqlcluster/deploy/ndb_data
 nodeid=1
 
@@ -59,22 +65,37 @@ noofreplicas=3
 datadir=/opt/mysqlcluster/deploy/ndb_data
 
 [ndbd]
-hostname=ip-10-0-1-222.ec2.internal
+hostname=ip-10-0-1-254.ec2.internal
 nodeid=2
 
 [ndbd]
-hostname=ip-10-0-1-154.ec2.internal
+hostname=ip-10-0-1-126.ec2.internal
 nodeid=3
 
 [ndbd]
-hostname=ip-10-0-1-42.ec2.internal
+hostname=ip-10-0-1-6.ec2.internal
 nodeid=4
 
 [mysqld]
-nodeid=5
-
+nodeid=50
 ----------
 cd /opt/mysqlcluster/home/mysqlc
 sudo scripts/mysql_install_db --no-defaults --datadir=/opt/mysqlcluster/deploy/mysqld_data
 sudo /opt/mysqlcluster/home/mysqlc/bin/ndb_mgmd -f /opt/mysqlcluster/deploy/conf/config.ini --initial --configdir=/opt/mysqlcluster/deploy/conf/
 
+mysqld --defaults-file="/opt/mysqlcluster/deploy/conf/my.cnf" --user=root &
+
+mysql_secure_installation
+
+
+wget https://downloads.mysql.com/docs/sakila-db.tar.gz
+tar -xzf sakila-db.tar.gz
+mysql -u root -p sakila < sakila-db/sakila-schema.sql
+mysql -u root -p sakila < sakila-db/sakila-data.sql
+
+
+
+sudo apt-get update
+sudo apt-get install sysbench
+sysbench /usr/share/sysbench/oltp_read_write.lua --mysql-host=127.0.0.1 --mysql-user=root --mysql-password=7221974 --mysql-db=sakila --tables=10 --table-size=10000 prepare
+sysbench /usr/share/sysbench/oltp_read_write.lua --mysql-host=127.0.0.1 --mysql-user=root --mysql-password=7221974 --mysql-db=sakila --tables=10 --table-size=10000 --time=60 --threads=8 --report-interval=10 run
