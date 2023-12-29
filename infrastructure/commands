@@ -1,3 +1,5 @@
+# Stand-alone server:
+
 sudo apt-get update'
 sudo apt-get install -y mysql-server
 """sudo mysql_secure_installation <<EOF
@@ -12,7 +14,10 @@ EOF""",
 'sudo mysql -u root -p < sakila-db/sakila-schema.sql',
 'sudo mysql -u root -p < sakila-db/sakila-data.sql',
 
-# Cluster
+
+
+# Cluster:
+
 ## each node:
 ### Phase 1
 sudo mkdir -p /opt/mysqlcluster/home
@@ -29,8 +34,8 @@ ndbd -c ip-10-0-1-225.ec2.internal:1186
 
 
 
-# manager node:
-## Phase 1
+## manager node:
+### Phase 1
 sudo mkdir -p /opt/mysqlcluster/home
 cd /opt/mysqlcluster/home && sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
 cd /opt/mysqlcluster/home && sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
@@ -38,7 +43,7 @@ cd /opt/mysqlcluster/home && sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 
 echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh && echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh && source /etc/profile.d/mysqlc.sh
 sudo apt-get update && sudo apt-get -y install libncurses5
 
-## Phase 2
+### Phase 2
 sudo mkdir -p /opt/mysqlcluster/deploy
 cd /opt/mysqlcluster/deploy
 sudo mkdir conf
@@ -87,14 +92,13 @@ mysqld --defaults-file="/opt/mysqlcluster/deploy/conf/my.cnf" --user=root &
 
 mysql_secure_installation
 
-
 wget https://downloads.mysql.com/docs/sakila-db.tar.gz
 tar -xzf sakila-db.tar.gz
 mysql -u root -p sakila < sakila-db/sakila-schema.sql
 mysql -u root -p sakila < sakila-db/sakila-data.sql
 
 
-
+# Sysbench for benchmark
 sudo apt-get update
 sudo apt-get install sysbench
 sysbench /usr/share/sysbench/oltp_read_write.lua --mysql-host=127.0.0.1 --mysql-user=root --mysql-password=7221974 --mysql-db=sakila --tables=10 --table-size=10000 prepare
