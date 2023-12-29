@@ -1,32 +1,32 @@
 [
     {
         "Name": "worker1",
-        "InstanceID": "i-022053b8fb69d8243",
-        "PublicDNS": "ec2-34-203-204-82.compute-1.amazonaws.com",
-        "PublicIP": "34.203.204.82"
+        "InstanceID": "i-0c51bf46a4ef8d89e",
+        "PublicDNS": "ec2-54-81-187-106.compute-1.amazonaws.com",
+        "PublicIP": "54.81.187.106"
     },
     {
         "Name": "worker2",
-        "InstanceID": "i-0660d8fcbd5528bd5",
-        "PublicDNS": "ec2-52-70-47-78.compute-1.amazonaws.com",
-        "PublicIP": "52.70.47.78"
+        "InstanceID": "i-0ebab85956b1a2b8f",
+        "PublicDNS": "ec2-35-153-180-151.compute-1.amazonaws.com",
+        "PublicIP": "35.153.180.151"
     },
     {
         "Name": "worker3",
-        "InstanceID": "i-0b0ac48454997a1fa",
-        "PublicDNS": "ec2-3-91-230-52.compute-1.amazonaws.com",
-        "PublicIP": "3.91.230.52"
+        "InstanceID": "i-0c5191a6b65f3e711",
+        "PublicDNS": "ec2-54-92-150-20.compute-1.amazonaws.com",
+        "PublicIP": "54.92.150.20"
     },
     {
         "Name": "manager",
-        "InstanceID": "i-0f5df259494e6ff76",
-        "PublicDNS": "ec2-44-201-216-172.compute-1.amazonaws.com",
-        "PublicIP": "44.201.216.172"
+        "InstanceID": "i-034e3facd21ea8f4b",
+        "PublicDNS": "ec2-52-91-9-249.compute-1.amazonaws.com",
+        "PublicIP": "52.91.9.249"
     },
     {
         "Name": "stand-alone",
-        "InstanceID": "i-0c016d4d58137ef11",
-        "PublicDNS": "ec2-54-197-21-57.compute-1.amazonaws.com",
-        "PublicIP": "54.197.21.57"
+        "InstanceID": "i-006855561e0a9e983",
+        "PublicDNS": "ec2-52-90-139-99.compute-1.amazonaws.com",
+        "PublicIP": "52.90.139.99"
     }
 ]
