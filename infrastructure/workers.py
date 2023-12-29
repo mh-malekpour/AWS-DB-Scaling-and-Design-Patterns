@@ -21,16 +21,15 @@ def read_script(file_path):
         return f.read()
 
 commands = [
-    'sudo mkdir -p /opt/mysqlcluster/home',
-    'cd /opt/mysqlcluster/home',
-    'sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz',
-    'sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz',
-    'sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc',
-    # "echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh",
-    # "echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh",
-    # "sudo source /etc/profile.d/mysqlc.sh",
-    "sudo sh -c \"echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' > /etc/profile.d/mysqlc.sh && echo 'export PATH=\\$MYSQLC_HOME/bin:\\$PATH' >> /etc/profile.d/mysqlc.sh && . /etc/profile.d/mysqlc.sh\"",
+    # phase 1
+    "sudo mkdir -p /opt/mysqlcluster/home",
+    "cd /opt/mysqlcluster/home && sudo wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz",
+    "cd /opt/mysqlcluster/home && sudo tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz",
+    "cd /opt/mysqlcluster/home && sudo ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc",
+    "echo 'export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc' | sudo tee /etc/profile.d/mysqlc.sh && echo 'export PATH=$MYSQLC_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/mysqlc.sh && source /etc/profile.d/mysqlc.sh",
     "sudo apt-get update && sudo apt-get -y install libncurses5",
+    # phase 2
+    "sudo mkdir -p /opt/mysqlcluster/deploy/ndb_data && sudo chmod -R 777 /opt && ndbd -c ip-10-0-1-225.ec2.internal:1186"
 ]
 
 def send_command(instance_ids, command):
