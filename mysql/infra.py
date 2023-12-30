@@ -111,7 +111,7 @@ role_arn = iam.get_role(RoleName='LabRole')['Role']['Arn']
 instances = ec2_resource.create_instances(
     ImageId=latest_ubuntu_ami,
     InstanceType='t2.micro',
-    MaxCount=5,
+    MaxCount=7,
     MinCount=1,
     KeyName='MyKeyPair',
     UserData=user_data_encoded,
@@ -147,6 +147,10 @@ for i, instance in enumerate(instances, start=1):
         instance_name = 'manager'
     elif i == 5:
         instance_name = "stand-alone"
+    elif i == 6:
+        instance_name = "proxy"
+    elif i == 7:
+        instance_name = "gate-keeper"
 
     instance.create_tags(Tags=[{'Key': 'Name', 'Value': instance_name}])
 
