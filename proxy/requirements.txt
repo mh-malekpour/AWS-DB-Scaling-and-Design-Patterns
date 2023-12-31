@@ -1,0 +1,4 @@
+flask
+pymysql
+boto3
+flask_api

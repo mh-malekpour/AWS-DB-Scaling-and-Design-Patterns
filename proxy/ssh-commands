@@ -1,0 +1,29 @@
+sudo apt update
+sudo apt install mysql-router
+
+sudo mkdir -p /etc/mysqlrouter
+sudo nano /etc/mysqlrouter/mysqlrouter.conf
+----------
+[DEFAULT]
+logging_folder = /var/log/mysqlrouter
+runtime_folder = /var/run/mysqlrouter
+config_folder = /etc/mysqlrouter
+data_folder = /var/lib/mysqlrouter
+
+[logger]
+level = INFO
+
+[routing:primary]
+bind_address = 0.0.0.0
+bind_port = 7001
+destinations = ip-10-0-1-225.ec2.internal:3306
+mode = read-write
+
+[routing:replicas]
+bind_address = 0.0.0.0
+bind_port = 7002
+destinations = ip-10-0-1-254.ec2.internal:3306,ip-10-0-1-126.ec2.internal:3306,ip-10-0-1-6.ec2.internal:3306
+mode = read-only
+-----------------------------
+
+sudo systemctl start mysqlrouter
