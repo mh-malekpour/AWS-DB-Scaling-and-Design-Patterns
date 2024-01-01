@@ -31,9 +31,9 @@
     },
     {
         "Name": "proxy",
-        "InstanceID": "i-0f09202e1ce4bf29a",
-        "PublicDNS": "ec2-3-81-208-56.compute-1.amazonaws.com",
-        "PublicIP": "3.81.208.56"
+        "InstanceID": "i-038c6ad23343d8602",
+        "PublicDNS": "ec2-54-224-49-60.compute-1.amazonaws.com",
+        "PublicIP": "54.224.49.60"
     },
     {
         "Name": "gate-keeper",
